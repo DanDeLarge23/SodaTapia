@@ -1,36 +1,31 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 
 /**
  *
  * @author Paula
  */
+import java.util.List;
 public class Orden {
     private String tipoHamburguesa;
-    private Ingrediente[] ingredientes;
+    private List<Ingrediente> ingredientes;
+    private int puntos;
 
-    public Orden(String tipoHamburguesa, Ingrediente[] ingredientes) {
+    public Orden(String tipoHamburguesa, List<Ingrediente> ingredientes, int puntos) {
         this.tipoHamburguesa = tipoHamburguesa;
         this.ingredientes = ingredientes;
+        this.puntos = puntos;
     }
 
     public String getTipoHamburguesa() {
         return tipoHamburguesa;
     }
 
-    public void setTipoHamburguesa(String tipoHamburguesa) {
-        this.tipoHamburguesa = tipoHamburguesa;
-    }
-
-    public Ingrediente[] getIngredientes() {
+    public List<Ingrediente> getIngredientes() {
         return ingredientes;
     }
 
-    public void setIngredientes(Ingrediente[] ingredientes) {
-        this.ingredientes = ingredientes;
+    public int getPuntos() {
+        return puntos;
     }
-
 }
 
