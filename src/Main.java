@@ -17,9 +17,18 @@ public class Main {
 
         HamburguesaJuego juego = new HamburguesaJuego();
 
-        JOptionPane.showMessageDialog(null, "¡Tiempo agotado! Puntaje final: " + juego.getPuntaje());
+        // Esperar 1 minuto antes de mostrar el mensaje final y salir
+        try {
+            Thread.sleep(60000); // 1 minuto en milisegundos
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         JOptionPane.showMessageDialog(null, "¡Gracias por jugar!");
 
         System.exit(0);
+     
+        CintaTransportadora cinta = new CintaTransportadora(5);
+        cinta.mostrarCintaEnVentana();
     }
 }

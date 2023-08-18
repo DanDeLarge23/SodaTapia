@@ -32,6 +32,31 @@ public class CintaTransportadora {
         return null;
     }
 
+    public void moverIzquierda() {
+        if (posicionActual == 0) {
+            posicionActual = capacidadMaxima - 1;
+        } else {
+            posicionActual--;
+        }
+    }
+
+    public int getCantidadIngredientes() {
+        int count = 0;
+        for (String ingrediente : ingredientes) {
+            if (ingrediente != null) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public void agregarIngredienteAleatorio() {
+        int nextPos = (posicionActual + 1) % capacidadMaxima;
+        if (ingredientes[nextPos] == null) {
+            ingredientes[nextPos] = generarIngredienteAleatorio();
+        }
+    }
+
     private void llenarCinta() {
         for (int i = 0; i < capacidadMaxima; i++) {
             ingredientes[i] = generarIngredienteAleatorio();
@@ -39,17 +64,9 @@ public class CintaTransportadora {
     }
 
     private String generarIngredienteAleatorio() {
-        String[] ingredientesPosibles = {"Pan", "Carne", "Lechuga", "Queso",
-                "Tomate", "Cebolla", "Salsa"};
+        String[] ingredientesPosibles = {"Pan", "Carne", "Lechuga", "Queso"};
         int indiceAleatorio = random.nextInt(ingredientesPosibles.length);
         return ingredientesPosibles[indiceAleatorio];
-    }
-
-    public void agregarIngrediente(String ingrediente) {
-        if (posicionActual < capacidadMaxima) {
-            ingredientes[posicionActual] = ingrediente;
-            posicionActual++;
-        }
     }
 
     public void mostrarCintaEnVentana() {
@@ -60,12 +77,5 @@ public class CintaTransportadora {
             }
         }
         JOptionPane.showMessageDialog(null, cintaText.toString());
-    }
-
-    // ... Otros métodos y funciones según tus necesidades
-
-    public static void main(String[] args) {
-        CintaTransportadora cinta = new CintaTransportadora(5);
-        cinta.mostrarCintaEnVentana();
     }
 }

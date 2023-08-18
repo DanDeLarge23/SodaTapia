@@ -11,9 +11,7 @@ import javax.swing.JOptionPane;
  * @author Paula
  */
 public class HamburguesaJuego {
-
-
-    private CintaTransportadora cinta;
+   private CintaTransportadora cinta;
     private Orden[] ordenes;
     private int ordenesCount; // Número de órdenes actuales
     private int puntaje;
@@ -68,6 +66,12 @@ public class HamburguesaJuego {
         int puntaje = calcularPuntaje(tipoHamburguesa);
         ordenes[ordenesCount] = new Orden(tipoHamburguesa, ingredientes, puntaje);
         ordenesCount++;
+    }
+    private void actualizarCinta() {
+        cinta.moverIzquierda();
+        if (cinta.getCantidadIngredientes() < 3) {
+            cinta.agregarIngredienteAleatorio();
+        }
     }
 
     private void actualizarOrdenes() {
@@ -146,5 +150,16 @@ public class HamburguesaJuego {
 
     private void mostrarPuntajeFinal() {
         JOptionPane.showMessageDialog(null, "¡Tiempo agotado! Puntaje final: " + puntaje);
+    }
+
+    public static void main(String[] args) {
+        JOptionPane.showMessageDialog(null, "¡Bienvenido al Juego de Hamburguesas!");
+
+        HamburguesaJuego juego = new HamburguesaJuego();
+
+        JOptionPane.showMessageDialog(null, "¡Tiempo agotado! Puntaje final: " + juego.getPuntaje());
+        JOptionPane.showMessageDialog(null, "¡Gracias por jugar!");
+
+        System.exit(0);
     }
 }
