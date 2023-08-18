@@ -12,17 +12,20 @@ import javax.swing.JOptionPane;
  */
 public class HamburguesaJuego {
 
+
     private CintaTransportadora cinta;
     private Orden[] ordenes;
+    private int ordenesCount; // Número de órdenes actuales
     private int puntaje;
     private int tiempo;
     private Timer juegoTimer; // Timer para el juego
-    
-   public HamburguesaJuego() {
+
+    public HamburguesaJuego() {
         cinta = new CintaTransportadora(5);
         ordenes = new Orden[3];
+        ordenesCount = 0;
         puntaje = 0;
-        tiempo = 60; 
+        tiempo = 60; // 1 minuto en segundos
         iniciarJuego();
     }
 
@@ -33,20 +36,10 @@ public class HamburguesaJuego {
             public void actionPerformed(ActionEvent e) {
                 // Actualizar el juego en cada tick del Timer
                 if (tiempo > 0) {
-                    // Lógica del juego
-                    for (int i = 0; i < ordenes.length; i++) {
-                        Orden orden = ordenes[i];
-                        if (orden != null) {
-                            String[] ingredientesTomados = new String[orden.getIngredientes().length];
-                            for (int j = 0; j < ingredientesTomados.length; j++) {
-                                ingredientesTomados[j] = cinta.tomarIngrediente();
-                            }
-                            if (orden.verificarHamburguesa(ingredientesTomados)) {
-                                puntaje += orden.getPuntaje();
-                                ordenes[i] = null;
-                            }
-                        }
+                    if (ordenesCount < 3) {
+                        generarOrden();
                     }
+                    actualizarOrdenes();
                     tiempo--;
                 } else {
                     // Detener el juego al agotarse el tiempo
@@ -55,15 +48,6 @@ public class HamburguesaJuego {
                 }
             }
         });
-
-        // Generar órdenes cada 20 segundos
-        Timer ordenesTimer = new Timer(20000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                generarOrdenes();
-            }
-        });
-        ordenesTimer.start();
 
         // Mostrar tiempo restante cada segundo
         Timer tiempoTimer = new Timer(1000, new ActionListener() {
@@ -78,16 +62,30 @@ public class HamburguesaJuego {
         juegoTimer.start();
     }
 
-    private void generarOrdenes() {
+    private void generarOrden() {
+        String tipoHamburguesa = generarTipoHamburguesaAleatoria();
+        String[] ingredientes = generarIngredientesAleatorios(tipoHamburguesa);
+        int puntaje = calcularPuntaje(tipoHamburguesa);
+        ordenes[ordenesCount] = new Orden(tipoHamburguesa, ingredientes, puntaje);
+        ordenesCount++;
+    }
+
+    private void actualizarOrdenes() {
         for (int i = 0; i < ordenes.length; i++) {
-            if (ordenes[i] == null) {
-                String tipoHamburguesa = generarTipoHamburguesaAleatoria();
-                String[] ingredientes = generarIngredientesAleatorios(tipoHamburguesa);
-                int puntaje = calcularPuntaje(tipoHamburguesa);
-                ordenes[i] = new Orden(tipoHamburguesa, ingredientes, puntaje);
+            Orden orden = ordenes[i];
+            if (orden != null) {
+                String[] ingredientesTomados = new String[orden.getIngredientes().length];
+                for (int j = 0; j < ingredientesTomados.length; j++) {
+                    ingredientesTomados[j] = cinta.tomarIngrediente();
+                }
+                if (orden.verificarHamburguesa(ingredientesTomados)) {
+                    puntaje += orden.getPuntaje();
+                    ordenes[i] = null;
+                    ordenesCount--;
+                }
             }
         }
-        mostrarOrdenes();
+        mostrarOrdenes(); // Mostrar las órdenes actualizadas
     }
 
     private String generarTipoHamburguesaAleatoria() {
@@ -110,7 +108,7 @@ public class HamburguesaJuego {
                 break;
         }
         return ingredientes;
-}
+    }
 
     private int calcularPuntaje(String tipoHamburguesa) {
         int puntaje = 0;
@@ -145,7 +143,8 @@ public class HamburguesaJuego {
     public int getPuntaje() {
         return puntaje;
     }
-  private void mostrarPuntajeFinal() {
+
+    private void mostrarPuntajeFinal() {
         JOptionPane.showMessageDialog(null, "¡Tiempo agotado! Puntaje final: " + puntaje);
     }
 }
