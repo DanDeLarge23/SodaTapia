@@ -34,7 +34,7 @@ public class CintaTransportadora {
 
     public void moverIzquierda() {
         if (posicionActual == 0) {
-            posicionActual = capacidadMaxima - 1;
+            posicionActual = capacidadMaxima - 2;
         } else {
             posicionActual--;
         }
