@@ -2,7 +2,6 @@
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -12,13 +11,10 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
 
-
 /**
  *
  * @author Dan
  */
-
-
 public class cocinaTapia extends javax.swing.JFrame {
 
     private Lista<Ingrediente> banda = new Lista<Ingrediente>();
@@ -48,27 +44,26 @@ public class cocinaTapia extends javax.swing.JFrame {
         actualizarReloj();
         playMusic();
     }
+
     private void playMusic() {
-    try {
-        // Load the music file
-        File musicFile = new File(getClass().getResource("/Popurri.wav").getFile());
-        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(musicFile);
+        try {
 
-        // Create a Clip object to play the music
-        Clip clip = AudioSystem.getClip();
-        clip.open(audioInputStream);
+            File musicFile = new File(getClass().getResource("/Popurri.wav").getFile());
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(musicFile);
 
-        // Set the clip to loop infinitely
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
 
-        // Start playing the music
-        clip.start();
-    } catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
-        e.printStackTrace();
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+
+            clip.start();
+        } catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        }
     }
-}
-    public void ponerIngrediente(){
-         Orden orden = null;
+
+    public void ponerIngrediente() {
+        Orden orden = null;
         if (ordenSeleccion == 1) {
             orden = ordenActual1;
         } else if (ordenSeleccion == 2) {
@@ -99,8 +94,8 @@ public class cocinaTapia extends javax.swing.JFrame {
             banda.insertar(new Ingrediente());
             cargarBanda();
             System.out.println(orden);
-            ordenSeleccion=0;
-            ingredienteSeleccion=0;
+            ordenSeleccion = 0;
+            ingredienteSeleccion = 0;
         }
         actualizarInfo();
     }
@@ -123,7 +118,7 @@ public class cocinaTapia extends javax.swing.JFrame {
         if (ordenActual3 != null) {
             TOrden3.setText(ordenActual3.getNombre());
             TBingredientes3.setText(ordenActual3.getIngredientes().listarNombres());
-        }else {
+        } else {
             TOrden3.setText("completa");
             TBingredientes3.setText("");
         }
@@ -165,12 +160,12 @@ public class cocinaTapia extends javax.swing.JFrame {
             while (true) {
                 long tiempoActual = System.currentTimeMillis();
                 long diferencia = tiempoActual - tiempoInicio;
-                long tiempoRestante = 2 * 60  * 1000 - diferencia;
+                long tiempoRestante = 2 * 60 * 1000 - diferencia;
 
                 if (tiempoRestante <= 0) {
                     TBTiempo.setText("Tiempo expirado");
                     this.setVisible(false);
-                    JOptionPane.showMessageDialog(null,"Game Over... \n El puntaje es: " + puntaje , "Puntaje", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Game Over... \n El puntaje es: " + puntaje, "Puntaje", JOptionPane.INFORMATION_MESSAGE);
                     this.dispose();
                     System.exit(0);
                     break;
@@ -513,14 +508,14 @@ public class cocinaTapia extends javax.swing.JFrame {
 
     private void LOrden1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LOrden1MouseClicked
         // TODO add your handling code here:
-        ordenSeleccion=1;
+        ordenSeleccion = 1;
         ponerIngrediente();
     }//GEN-LAST:event_LOrden1MouseClicked
 
     private void LOrden3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LOrden3MouseClicked
         // TODO add your handling code here:
-        ordenSeleccion=3;
-        
+        ordenSeleccion = 3;
+
         ponerIngrediente();
     }//GEN-LAST:event_LOrden3MouseClicked
 
@@ -533,8 +528,8 @@ public class cocinaTapia extends javax.swing.JFrame {
 
     private void LOrden2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LOrden2MouseClicked
         // TODO add your handling code here:
-        ordenSeleccion=2;
-        
+        ordenSeleccion = 2;
+
         ponerIngrediente();
     }//GEN-LAST:event_LOrden2MouseClicked
 
