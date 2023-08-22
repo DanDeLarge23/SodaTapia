@@ -29,7 +29,7 @@ public class cocinaTapia extends javax.swing.JFrame {
     private static Orden ordenActual2 = null;
     private static Orden ordenActual3 = null;
     private int puntaje = 0;
-    private static int tiempoOrden = 20;
+    private static int tiempoOrden = 10;
     private static int minutos = 5;
     private static int segundos = 0;
 
@@ -147,7 +147,7 @@ public class cocinaTapia extends javax.swing.JFrame {
                 recibirOrden();
                 this.TBespera.setText(ordenes.listarNombres());
                 try {
-                    Thread.sleep(20000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -165,12 +165,12 @@ public class cocinaTapia extends javax.swing.JFrame {
             while (true) {
                 long tiempoActual = System.currentTimeMillis();
                 long diferencia = tiempoActual - tiempoInicio;
-                long tiempoRestante = 5 * 60  * 1000 - diferencia;
+                long tiempoRestante = 2 * 60  * 1000 - diferencia;
 
                 if (tiempoRestante <= 0) {
                     TBTiempo.setText("Tiempo expirado");
                     this.setVisible(false);
-                    JOptionPane.showMessageDialog(null,"¡Se terminó el tiempo! \n Tu puntaje es: " + puntaje , "Puntaje", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null,"Game Over... \n El puntaje es: " + puntaje , "Puntaje", JOptionPane.INFORMATION_MESSAGE);
                     this.dispose();
                     System.exit(0);
                     break;

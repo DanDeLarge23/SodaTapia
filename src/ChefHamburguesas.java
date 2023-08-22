@@ -56,8 +56,8 @@ public class ChefHamburguesas {
         cintaTransportadora = new Ingrediente[]{ new Ingrediente("Pan"), new Ingrediente("Carne"), new Ingrediente("Lechuga"), new Ingrediente("Tomate") };
         tiempoRestante = 300; // 5 minutos en segundos
 
-        // Temporizador para agregar nuevas órdenes cada 20 segundos
-        temporizadorOrdenes = new Timer(20000, (e) -> agregarNuevaOrden());
+        // Temporizador para agregar nuevas órdenes cada 10 segundos
+        temporizadorOrdenes = new Timer(1000, (e) -> agregarNuevaOrden());
         temporizadorOrdenes.start();
     }
 
@@ -87,7 +87,4 @@ public class ChefHamburguesas {
         Random random = new Random();
         return tiposHamburguesas[random.nextInt(tiposHamburguesas.length)];
     }
-
-    // Implementar la lógica para preparar las órdenes y actualizar la cinta transportadora.
-    // ...
 }
