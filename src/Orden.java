@@ -2,59 +2,71 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-import javax.swing.JOptionPane;
+
 /**
  *
  * @author Paula
  */
 public class Orden {
 
-    private String tipoHamburguesa;
-    private String[] ingredientes;
-    private int puntaje;
+    private String nombre;
+    private Lista<Ingrediente> ingredientes = new Lista<Ingrediente>();
 
-    public Orden(String tipoHamburguesa, String[] ingredientes, int puntaje) {
-        this.tipoHamburguesa = tipoHamburguesa;
-        this.ingredientes = ingredientes;
-        this.puntaje = puntaje;
+    public String getNombre() {
+        return nombre;
     }
 
-    public String getTipoHamburguesa() {
-        return tipoHamburguesa;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public String[] getIngredientes() {
+    public Lista<Ingrediente> getIngredientes() {
         return ingredientes;
     }
 
-    public int getPuntaje() {
-        return puntaje;
+    public void setIngredientes(Lista<Ingrediente> ingredientes) {
+        this.ingredientes = ingredientes;
     }
 
-    public boolean verificarHamburguesa(String[] ingredientesTomados) {
-        if (ingredientesTomados.length != ingredientes.length) {
-            return false;
+    public Orden(String tipoHamburguesa) {
+        this.nombre = tipoHamburguesa;
+        if (tipoHamburguesa.equals("HCarne")) {
+            this.ingredientes.insertar(new Ingrediente("pan"));
+            this.ingredientes.insertar(new Ingrediente("carne"));
+        } else if (tipoHamburguesa.equals("HQueso")) {
+            this.ingredientes.insertar(new Ingrediente("pan"));
+            this.ingredientes.insertar(new Ingrediente("carne"));
+            this.ingredientes.insertar(new Ingrediente("queso"));
+        } else if (tipoHamburguesa.equals("HClasica")) {
+            this.ingredientes.insertar(new Ingrediente("pan"));
+            this.ingredientes.insertar(new Ingrediente("carne"));
+            this.ingredientes.insertar(new Ingrediente("queso"));
+            this.ingredientes.insertar(new Ingrediente("lechuga"));
         }
-        for (String ingrediente : ingredientes) {
-            boolean encontrado = false;
-            for (String ingredienteTomado : ingredientesTomados) {
-                if (ingrediente.equals(ingredienteTomado)) {
-                    encontrado = true;
-                    break;
-                }
-            }
-            if (!encontrado) {
-                return false;
+    }
+        
+    public void EliminarIngrediente (String nombreIngrediente) {
+        for(int i=0; i<this.ingredientes.tamano();i++){
+            if (this.ingredientes.obtener(i).getNombre().equals(nombreIngrediente)){
+                this.ingredientes.eliminar(i);
+                System.out.println("Ingrediente " + nombreIngrediente + " eliminado.");
+                return;
             }
         }
-        return true;
+        System.out.println("Ingrediente " + nombreIngrediente + " no encontrado en la orden.");  
     }
 
-    public String toMensajeString() {
-        return "Orden: " + tipoHamburguesa + " (" + String.join(", ", ingredientes) + ")";
+    @Override
+    public String toString() {
+        return nombre;
     }
 
-    public void mostrarEnVentana() {
-        JOptionPane.showMessageDialog(null, toMensajeString());
+    public String getTipoHamburguesa() {
+        return nombre;
     }
+
+    public void setTipoHamburguesa(String tipoHamburguesa) {
+        this.nombre = tipoHamburguesa;
+    }
+
 }
