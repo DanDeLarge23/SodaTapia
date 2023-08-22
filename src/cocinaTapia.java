@@ -74,7 +74,8 @@ public class cocinaTapia extends javax.swing.JFrame {
 
         if (orden != null && ingredienteSeleccion != 0) {
 
-            orden.EliminarIngrediente(banda.obtener(ingredienteSeleccion - 1).getNombre());
+            orden.EliminarIngrediente(banda.obtener(
+                    ingredienteSeleccion - 1).getNombre());
 
             if (orden.getIngredientes().tamano() == 0) {
                 puntaje = puntaje + orden.getPuntos();
@@ -165,7 +166,9 @@ public class cocinaTapia extends javax.swing.JFrame {
                 if (tiempoRestante <= 0) {
                     TBTiempo.setText("Tiempo expirado");
                     this.setVisible(false);
-                    JOptionPane.showMessageDialog(null, "Game Over... \n El puntaje es: " + puntaje, "Puntaje", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null,
+                            "Game Over... \n El puntaje es: " + puntaje, 
+                            "Puntaje", JOptionPane.INFORMATION_MESSAGE);
                     this.dispose();
                     System.exit(0);
                     break;
@@ -186,11 +189,16 @@ public class cocinaTapia extends javax.swing.JFrame {
     }
 
     public void cargarBanda() {
-        this.jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource(banda.obtener(0).getImagen())));
-        this.jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource(banda.obtener(1).getImagen())));
-        this.jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource(banda.obtener(2).getImagen())));
-        this.jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource(banda.obtener(3).getImagen())));
-        this.jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource(banda.obtener(4).getImagen())));
+        this.jButton5.setIcon(new javax.swing.ImageIcon(
+                getClass().getResource(banda.obtener(0).getImagen())));
+        this.jButton2.setIcon(new javax.swing.ImageIcon(
+                getClass().getResource(banda.obtener(1).getImagen())));
+        this.jButton3.setIcon(new javax.swing.ImageIcon(
+                getClass().getResource(banda.obtener(2).getImagen())));
+        this.jButton4.setIcon(new javax.swing.ImageIcon(
+                getClass().getResource(banda.obtener(3).getImagen())));
+        this.jButton6.setIcon(new javax.swing.ImageIcon(
+                getClass().getResource(banda.obtener(4).getImagen())));
     }
 
     public void recibirOrden() {
