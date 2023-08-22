@@ -1,22 +1,28 @@
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Dan
  */
-
-
 public class cocinaTapia extends javax.swing.JFrame {
+
     private Lista<Ingrediente> banda = new Lista<Ingrediente>();
     static Lista<Orden> ordenes = new Lista<Orden>();
     private int ingredienteSeleccion = 0;
-    private static Orden ordenActual = null;
+    private int ordenSeleccion = 0;
+    private static Orden ordenActual1 = null;
+    private static Orden ordenActual2 = null;
+    private static Orden ordenActual3 = null;
+    private int puntaje = 0;
+    private static int tiempoOrden = 20;
+    private static int minutos = 5;
+    private static int segundos = 0;
+
     /**
      * Creates new form cocinaTapia
      */
@@ -29,44 +35,161 @@ public class cocinaTapia extends javax.swing.JFrame {
         banda.insertar(new Ingrediente());
         cargarBanda();
         generarOrden();
-        ordenActual = ordenes.obtener(0);
+        actualizarReloj();
+    }
+    
+    public void ponerIngrediente(){
+         Orden orden = null;
+        if (ordenSeleccion == 1) {
+            orden = ordenActual1;
+        } else if (ordenSeleccion == 2) {
+            orden = ordenActual2;
+        } else if (ordenSeleccion == 3) {
+            orden = ordenActual3;
+        }
+
+        if (orden != null && ingredienteSeleccion != 0) {
+
+            orden.EliminarIngrediente(banda.obtener(ingredienteSeleccion - 1).getNombre());
+
+            if (orden.getIngredientes().tamano() == 0) {
+                puntaje = puntaje + orden.getPuntos();
+                if (ordenSeleccion == 1) {
+                    ordenActual1 = null;
+                } else if (ordenSeleccion == 2) {
+                    ordenActual2 = null;
+                } else if (ordenSeleccion == 3) {
+                    ordenActual3 = null;
+                }
+                actualizarInfo();
+                this.TBPuntaje.setText(Integer.toString(puntaje));
+                recibirOrden();
+            }
+
+            banda.eliminar(ingredienteSeleccion - 1);
+            banda.insertar(new Ingrediente());
+            cargarBanda();
+            System.out.println(orden);
+            ordenSeleccion=0;
+            ingredienteSeleccion=0;
+        }
         actualizarInfo();
     }
-    
-    public void actualizarInfo(){
-        TBordenActual.setText(ordenActual.getNombre());
-        this.TBingredientes.setText(ordenActual.getIngredientes().listarNombres());
-        this.TBespera.setText(ordenes.listarNombres());
+
+    public void actualizarInfo() {
+        if (ordenActual1 != null) {
+            TOrden1.setText(ordenActual1.getNombre());
+            TBingredientes1.setText(ordenActual1.getIngredientes().listarNombres());
+        } else {
+            TOrden1.setText("completa");
+            TBingredientes1.setText("");
+        }
+        if (ordenActual2 != null) {
+            TOrden2.setText(ordenActual2.getNombre());
+            TBingredientes2.setText(ordenActual2.getIngredientes().listarNombres());
+        } else {
+            TOrden2.setText("completa");
+            TBingredientes2.setText("");
+        }
+        if (ordenActual3 != null) {
+            TOrden3.setText(ordenActual3.getNombre());
+            TBingredientes3.setText(ordenActual3.getIngredientes().listarNombres());
+        }else {
+            TOrden3.setText("completa");
+            TBingredientes3.setText("");
+        }
     }
-    
-    public static class OrdenRunnable implements Runnable {
-        @Override
-        public void run() {
+
+    private void generarOrden() {
+        Thread updateThread = new Thread(() -> {
             while (true) {
+                if (!(ordenActual1 != null && ordenActual2 != null && ordenActual3 != null)) {
+                    Random random = new Random();
+
+                    String[] tiposHamburguesa = {"HCarne", "HQueso", "HClasica"};
+                    int indiceAleatorio = random.nextInt(tiposHamburguesa.length);
+                    String tipoHamburguesa = tiposHamburguesa[indiceAleatorio];
+
+                    Orden orden = new Orden(tipoHamburguesa);
+                    ordenes.insertar(orden);
+                    System.out.println("Se agregó una orden");
+                    System.out.println(ordenes.tamano());
+                }
+                recibirOrden();
+                this.TBespera.setText(ordenes.listarNombres());
                 try {
-                    generarOrden();
-                    Thread.sleep(2 * 1000); // Esperar 20 segundos
+                    Thread.sleep(20000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
+        });
+
+        updateThread.start();
+    }
+
+    private void actualizarReloj() {
+        Thread thread = new Thread(() -> {
+            SimpleDateFormat formato = new SimpleDateFormat("mm:ss");
+            long tiempoInicio = System.currentTimeMillis();
+
+            while (true) {
+                long tiempoActual = System.currentTimeMillis();
+                long diferencia = tiempoActual - tiempoInicio;
+                long tiempoRestante = 5 * 60  * 1000 - diferencia;
+
+                if (tiempoRestante <= 0) {
+                    TBTiempo.setText("Tiempo expirado");
+                    this.setVisible(false);
+                    JOptionPane.showMessageDialog(null,"¡Se terminó el tiempo! \n Tu puntaje es: " + puntaje , "Puntaje", JOptionPane.INFORMATION_MESSAGE);
+                    this.dispose();
+                    System.exit(0);
+                    break;
+                }
+
+                Date tiempoFormateado = new Date(tiempoRestante);
+                TBTiempo.setText(formato.format(tiempoFormateado));
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
+    }
+
+    public void cargarBanda() {
+        this.jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource(banda.obtener(0).getImagen())));
+        this.jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource(banda.obtener(1).getImagen())));
+        this.jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource(banda.obtener(2).getImagen())));
+        this.jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource(banda.obtener(3).getImagen())));
+        this.jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource(banda.obtener(4).getImagen())));
+    }
+
+    public void recibirOrden() {
+        if (ordenes.tamano() > 0) {
+            if (ordenActual1 == null) {
+                ordenActual1 = ordenes.obtener(0);
+                TOrden1.setText(ordenActual1.getNombre());
+                TBingredientes1.setText(ordenActual1.getIngredientes().listarNombres());
+                ordenes.eliminar(0);
+            } else if (ordenActual2 == null) {
+                ordenActual2 = ordenes.obtener(0);
+                TOrden2.setText(ordenActual2.getNombre());
+                TBingredientes2.setText(ordenActual2.getIngredientes().listarNombres());
+                ordenes.eliminar(0);
+            } else if (ordenActual3 == null) {
+                ordenActual3 = ordenes.obtener(0);
+                TOrden3.setText(ordenActual3.getNombre());
+                TBingredientes3.setText(ordenActual3.getIngredientes().listarNombres());
+                ordenes.eliminar(0);
+            }
+            actualizarInfo();
         }
     }
-    
-    public static synchronized void generarOrden() {
-        Random random = new Random();
-
-        String[] tiposHamburguesa = {"HCarne", "HQueso", "HClasica"};
-        int indiceAleatorio = random.nextInt(tiposHamburguesa.length);
-        String tipoHamburguesa = tiposHamburguesa[indiceAleatorio];
-
-        Orden orden = new Orden(tipoHamburguesa); // Supongo que tienes una lista de ingredientes
-        ordenes.insertar(orden);
-        System.out.println("Se agregó una orden");
-        System.out.println(ordenes.tamano());
-    }
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -85,19 +208,23 @@ public class cocinaTapia extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
-        tiempoPanel = new javax.swing.JPanel();
         puntos = new javax.swing.JLabel();
         tiempo = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        LOrden2 = new javax.swing.JLabel();
         logo = new javax.swing.JLabel();
-        tiempoPanel1 = new javax.swing.JPanel();
-        TBingredientes = new javax.swing.JLabel();
-        orden = new javax.swing.JLabel();
-        orden3 = new javax.swing.JLabel();
-        TBordenActual = new javax.swing.JLabel();
+        TBingredientes1 = new javax.swing.JLabel();
+        TOrden1 = new javax.swing.JLabel();
         orden4 = new javax.swing.JLabel();
         TBespera = new javax.swing.JLabel();
         Basurero = new javax.swing.JButton();
+        TBPuntaje = new javax.swing.JLabel();
+        TBTiempo = new javax.swing.JLabel();
+        LOrden3 = new javax.swing.JLabel();
+        LOrden1 = new javax.swing.JLabel();
+        TOrden2 = new javax.swing.JLabel();
+        TBingredientes2 = new javax.swing.JLabel();
+        TOrden3 = new javax.swing.JLabel();
+        TBingredientes3 = new javax.swing.JLabel();
 
         jLabel2.setText("jLabel2");
 
@@ -135,6 +262,11 @@ public class cocinaTapia extends javax.swing.JFrame {
                 jButton5MouseClicked(evt);
             }
         });
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Pan.png"))); // NOI18N
         jButton6.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -148,16 +280,16 @@ public class cocinaTapia extends javax.swing.JFrame {
         CintaLayout.setHorizontalGroup(
             CintaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(CintaLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton5)
+                .addGap(29, 29, 29)
+                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton4)
+                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton6)
+                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         CintaLayout.setVerticalGroup(
@@ -172,61 +304,33 @@ public class cocinaTapia extends javax.swing.JFrame {
                     .addComponent(jButton6, javax.swing.GroupLayout.Alignment.TRAILING)))
         );
 
-        tiempoPanel.setBackground(new java.awt.Color(249, 249, 230));
-
-        javax.swing.GroupLayout tiempoPanelLayout = new javax.swing.GroupLayout(tiempoPanel);
-        tiempoPanel.setLayout(tiempoPanelLayout);
-        tiempoPanelLayout.setHorizontalGroup(
-            tiempoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 89, Short.MAX_VALUE)
-        );
-        tiempoPanelLayout.setVerticalGroup(
-            tiempoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 50, Short.MAX_VALUE)
-        );
-
         puntos.setFont(new java.awt.Font("Alienware Heavy", 0, 24)); // NOI18N
         puntos.setText("Puntos:");
 
         tiempo.setFont(new java.awt.Font("Alienware Heavy", 0, 24)); // NOI18N
         tiempo.setText("Tiempo:");
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/7f979e56970fac5113b24d5e71ff032d-icono-de-plato-de-cena.png"))); // NOI18N
-        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+        LOrden2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/7f979e56970fac5113b24d5e71ff032d-icono-de-plato-de-cena.png"))); // NOI18N
+        LOrden2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel1MouseClicked(evt);
+                LOrden2MouseClicked(evt);
             }
         });
 
+        logo.setFont(new java.awt.Font("Segoe UI", 0, 8)); // NOI18N
         logo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Logotipo-Convenios_0.png"))); // NOI18N
+        logo.setToolTipText("");
 
-        tiempoPanel1.setBackground(new java.awt.Color(252, 252, 242));
+        TBingredientes1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        TBingredientes1.setText("jLabel3");
 
-        javax.swing.GroupLayout tiempoPanel1Layout = new javax.swing.GroupLayout(tiempoPanel1);
-        tiempoPanel1.setLayout(tiempoPanel1Layout);
-        tiempoPanel1Layout.setHorizontalGroup(
-            tiempoPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 120, Short.MAX_VALUE)
-        );
-        tiempoPanel1Layout.setVerticalGroup(
-            tiempoPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 50, Short.MAX_VALUE)
-        );
+        TOrden1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        TOrden1.setText("jLabel3");
 
-        TBingredientes.setText("jLabel3");
-
-        orden.setFont(new java.awt.Font("Alienware Heavy", 0, 36)); // NOI18N
-        orden.setText("Ingredientes");
-
-        orden3.setFont(new java.awt.Font("Alienware Heavy", 0, 36)); // NOI18N
-        orden3.setText("Orden Actual ");
-
-        TBordenActual.setText("jLabel3");
-
-        orden4.setFont(new java.awt.Font("Alienware Heavy", 0, 36)); // NOI18N
+        orden4.setFont(new java.awt.Font("Alienware Heavy", 0, 24)); // NOI18N
         orden4.setText("Espera:");
 
-        TBespera.setText("jLabel3");
+        TBespera.setText("lista");
 
         Basurero.setText("Basurero");
         Basurero.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -234,6 +338,38 @@ public class cocinaTapia extends javax.swing.JFrame {
                 BasureroMouseClicked(evt);
             }
         });
+
+        TBPuntaje.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        TBPuntaje.setText("0");
+
+        TBTiempo.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        TBTiempo.setText("00:00");
+
+        LOrden3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/7f979e56970fac5113b24d5e71ff032d-icono-de-plato-de-cena.png"))); // NOI18N
+        LOrden3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                LOrden3MouseClicked(evt);
+            }
+        });
+
+        LOrden1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/7f979e56970fac5113b24d5e71ff032d-icono-de-plato-de-cena.png"))); // NOI18N
+        LOrden1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                LOrden1MouseClicked(evt);
+            }
+        });
+
+        TOrden2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        TOrden2.setText("jLabel3");
+
+        TBingredientes2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        TBingredientes2.setText("jLabel3");
+
+        TOrden3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        TOrden3.setText("jLabel3");
+
+        TBingredientes3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        TBingredientes3.setText("jLabel3");
 
         javax.swing.GroupLayout FondoLayout = new javax.swing.GroupLayout(Fondo);
         Fondo.setLayout(FondoLayout);
@@ -243,85 +379,108 @@ public class cocinaTapia extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(Cinta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(FondoLayout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(FondoLayout.createSequentialGroup()
-                        .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(orden, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(TBingredientes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(orden3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(TBordenActual, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(orden4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(TBespera, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(FondoLayout.createSequentialGroup()
-                        .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(puntos, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(tiempoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(48, 48, 48)
-                        .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(tiempo, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(tiempoPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(803, 803, 803))))
-            .addGroup(FondoLayout.createSequentialGroup()
                 .addGap(368, 368, 368)
                 .addComponent(Basurero)
                 .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FondoLayout.createSequentialGroup()
+                .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(FondoLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(FondoLayout.createSequentialGroup()
+                                .addComponent(tiempo, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(TBTiempo))
+                            .addGroup(FondoLayout.createSequentialGroup()
+                                .addComponent(puntos, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(TBPuntaje)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FondoLayout.createSequentialGroup()
+                                .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(TOrden3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
+                                    .addComponent(TBingredientes3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(4, 4, 4))
+                            .addComponent(TBespera, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FondoLayout.createSequentialGroup()
+                                .addComponent(orden4)
+                                .addGap(72, 72, 72))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, FondoLayout.createSequentialGroup()
+                        .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FondoLayout.createSequentialGroup()
+                                .addGap(25, 25, 25)
+                                .addComponent(TOrden1, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(FondoLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(LOrden1)
+                                    .addComponent(TBingredientes1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(FondoLayout.createSequentialGroup()
+                                .addComponent(LOrden2)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(TBingredientes2, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
+                                .addComponent(TOrden2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(9, 9, 9)
+                        .addComponent(LOrden3)))
+                .addGap(25, 25, 25))
         );
         FondoLayout.setVerticalGroup(
             FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FondoLayout.createSequentialGroup()
                 .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(FondoLayout.createSequentialGroup()
-                        .addContainerGap()
+                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(FondoLayout.createSequentialGroup()
+                        .addContainerGap(14, Short.MAX_VALUE)
+                        .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(puntos, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(TBPuntaje)
+                            .addComponent(orden4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(FondoLayout.createSequentialGroup()
-                                .addComponent(puntos, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(tiempoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(orden)
-                        .addGap(21, 21, 21)
-                        .addComponent(TBingredientes, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(tiempo, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(TBTiempo))
+                            .addComponent(TBespera, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(FondoLayout.createSequentialGroup()
-                        .addGap(8, 8, 8)
-                        .addComponent(tiempo, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(LOrden2, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(LOrden1, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(7, 7, 7)
+                        .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(TOrden2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(TOrden1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tiempoPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(36, 36, 36)
-                        .addComponent(orden3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(TBordenActual, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(orden4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(TBespera, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(TBingredientes1, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+                            .addComponent(TBingredientes2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(FondoLayout.createSequentialGroup()
-                        .addGap(134, 134, 134)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
+                        .addComponent(LOrden3, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(11, 11, 11)
+                        .addComponent(TOrden3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(TBingredientes3, javax.swing.GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Cinta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Basurero)
-                .addContainerGap(452, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(Fondo, javax.swing.GroupLayout.PREFERRED_SIZE, 833, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(Fondo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -333,55 +492,61 @@ public class cocinaTapia extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
+    private void LOrden1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LOrden1MouseClicked
         // TODO add your handling code here:
-        ordenActual.EliminarIngrediente(banda.obtener(ingredienteSeleccion-1).getNombre());
-        this.TBingredientes.setText(ordenActual.getIngredientes().listarNombres());
+        ordenSeleccion=1;
+        ponerIngrediente();
+    }//GEN-LAST:event_LOrden1MouseClicked
+
+    private void LOrden3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LOrden3MouseClicked
+        // TODO add your handling code here:
+        ordenSeleccion=3;
         
-        if (ordenActual.getIngredientes().tamano()==0){
-            ordenes.eliminar(0);
-            System.out.println(ordenes.tamano());
-            ordenActual = ordenes.obtener(0);
-            this.actualizarInfo();
-            System.out.println("se hizo");
-        }
-        
-        banda.eliminar(ingredienteSeleccion-1);
-        banda.insertar(new Ingrediente());
-        cargarBanda();
-    }//GEN-LAST:event_jLabel1MouseClicked
-
-    private void jButton5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton5MouseClicked
-        // TODO add your handling code here:
-        this.ingredienteSeleccion =1;
-    }//GEN-LAST:event_jButton5MouseClicked
-
-    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
-        // TODO add your handling code here:
-        this.ingredienteSeleccion =2;
-    }//GEN-LAST:event_jButton2MouseClicked
-
-    private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseClicked
-        // TODO add your handling code here:
-        this.ingredienteSeleccion =3;
-    }//GEN-LAST:event_jButton3MouseClicked
-
-    private void jButton4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton4MouseClicked
-        // TODO add your handling code here:
-        this.ingredienteSeleccion =4;
-    }//GEN-LAST:event_jButton4MouseClicked
-
-    private void jButton6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton6MouseClicked
-        // TODO add your handling code here:
-        this.ingredienteSeleccion =5;
-    }//GEN-LAST:event_jButton6MouseClicked
+        ponerIngrediente();
+    }//GEN-LAST:event_LOrden3MouseClicked
 
     private void BasureroMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BasureroMouseClicked
         // TODO add your handling code here:
-        banda.eliminar(ingredienteSeleccion-1);
+        banda.eliminar(ingredienteSeleccion - 1);
         banda.insertar(new Ingrediente());
         cargarBanda();
     }//GEN-LAST:event_BasureroMouseClicked
+
+    private void LOrden2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LOrden2MouseClicked
+        // TODO add your handling code here:
+        ordenSeleccion=2;
+        
+        ponerIngrediente();
+    }//GEN-LAST:event_LOrden2MouseClicked
+
+    private void jButton6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton6MouseClicked
+        // TODO add your handling code here:
+        this.ingredienteSeleccion = 5;
+    }//GEN-LAST:event_jButton6MouseClicked
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton5MouseClicked
+        // TODO add your handling code here:
+        this.ingredienteSeleccion = 1;
+    }//GEN-LAST:event_jButton5MouseClicked
+
+    private void jButton4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton4MouseClicked
+        // TODO add your handling code here:
+        this.ingredienteSeleccion = 4;
+    }//GEN-LAST:event_jButton4MouseClicked
+
+    private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseClicked
+        // TODO add your handling code here:
+        this.ingredienteSeleccion = 3;
+    }//GEN-LAST:event_jButton3MouseClicked
+
+    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+        // TODO add your handling code here:
+        this.ingredienteSeleccion = 2;
+    }//GEN-LAST:event_jButton2MouseClicked
 
     /**
      * @param args the command line arguments
@@ -411,46 +576,38 @@ public class cocinaTapia extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        
-        Thread ordenThread = new Thread(new OrdenRunnable());
-        ordenThread.start();
-        
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new cocinaTapia().setVisible(true);
             }
         });
     }
-    
-    public void cargarBanda(){
-        this.jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource(banda.obtener(0).getImagen())));
-        this.jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource(banda.obtener(1).getImagen())));
-        this.jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource(banda.obtener(2).getImagen())));
-        this.jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource(banda.obtener(3).getImagen())));
-        this.jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource(banda.obtener(4).getImagen())));
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Basurero;
     private javax.swing.JPanel Cinta;
     private javax.swing.JPanel Fondo;
+    private javax.swing.JLabel LOrden1;
+    private javax.swing.JLabel LOrden2;
+    private javax.swing.JLabel LOrden3;
+    private javax.swing.JLabel TBPuntaje;
+    private javax.swing.JLabel TBTiempo;
     private javax.swing.JLabel TBespera;
-    private javax.swing.JLabel TBingredientes;
-    private javax.swing.JLabel TBordenActual;
+    private javax.swing.JLabel TBingredientes1;
+    private javax.swing.JLabel TBingredientes2;
+    private javax.swing.JLabel TBingredientes3;
+    private javax.swing.JLabel TOrden1;
+    private javax.swing.JLabel TOrden2;
+    private javax.swing.JLabel TOrden3;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel logo;
-    private javax.swing.JLabel orden;
-    private javax.swing.JLabel orden3;
     private javax.swing.JLabel orden4;
     private javax.swing.JLabel puntos;
     private javax.swing.JLabel tiempo;
-    private javax.swing.JPanel tiempoPanel;
-    private javax.swing.JPanel tiempoPanel1;
     // End of variables declaration//GEN-END:variables
 }

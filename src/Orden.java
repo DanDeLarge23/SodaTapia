@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 
 /**
  *
@@ -11,6 +7,19 @@ public class Orden {
 
     private String nombre;
     private Lista<Ingrediente> ingredientes = new Lista<Ingrediente>();
+    private int puntos;
+
+    Orden(String tipoHamburguesa, Ingrediente[] ingredientes) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public int getPuntos() {
+        return puntos;
+    }
+
+    public void setPuntos(int puntos) {
+        this.puntos = puntos;
+    }
 
     public String getNombre() {
         return nombre;
@@ -33,15 +42,19 @@ public class Orden {
         if (tipoHamburguesa.equals("HCarne")) {
             this.ingredientes.insertar(new Ingrediente("pan"));
             this.ingredientes.insertar(new Ingrediente("carne"));
+            this.puntos = 5;
         } else if (tipoHamburguesa.equals("HQueso")) {
             this.ingredientes.insertar(new Ingrediente("pan"));
             this.ingredientes.insertar(new Ingrediente("carne"));
             this.ingredientes.insertar(new Ingrediente("queso"));
+            
+            this.puntos = 10;
         } else if (tipoHamburguesa.equals("HClasica")) {
             this.ingredientes.insertar(new Ingrediente("pan"));
             this.ingredientes.insertar(new Ingrediente("carne"));
             this.ingredientes.insertar(new Ingrediente("queso"));
             this.ingredientes.insertar(new Ingrediente("lechuga"));
+            this.puntos = 15;
         }
     }
         

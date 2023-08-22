@@ -1,3 +1,7 @@
+/**
+ *
+ * @author Paula
+ */
 public class Lista<T> {
     private Nodo<T> cabeza;
     private Nodo<T> ultimo;
