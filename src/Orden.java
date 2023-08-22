@@ -10,7 +10,7 @@ public class Orden {
     private int puntos;
 
     Orden(String tipoHamburguesa, Ingrediente[] ingredientes) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 
     public int getPuntos() {

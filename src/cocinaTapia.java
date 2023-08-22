@@ -4,11 +4,21 @@ import java.util.Date;
 import java.util.Random;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.File;
+import java.io.IOException;
+
 
 /**
  *
  * @author Dan
  */
+
+
 public class cocinaTapia extends javax.swing.JFrame {
 
     private Lista<Ingrediente> banda = new Lista<Ingrediente>();
@@ -36,8 +46,27 @@ public class cocinaTapia extends javax.swing.JFrame {
         cargarBanda();
         generarOrden();
         actualizarReloj();
+        playMusic();
     }
-    
+    private void playMusic() {
+    try {
+        // Load the music file
+        File musicFile = new File("/Popurri.mp3");
+        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(musicFile);
+
+        // Create a Clip object to play the music
+        Clip clip = AudioSystem.getClip();
+        clip.open(audioInputStream);
+
+        // Set the clip to loop infinitely
+        clip.loop(Clip.LOOP_CONTINUOUSLY);
+
+        // Start playing the music
+        clip.start();
+    } catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
+        e.printStackTrace();
+    }
+}
     public void ponerIngrediente(){
          Orden orden = null;
         if (ordenSeleccion == 1) {
@@ -214,7 +243,6 @@ public class cocinaTapia extends javax.swing.JFrame {
         logo = new javax.swing.JLabel();
         TBingredientes1 = new javax.swing.JLabel();
         TOrden1 = new javax.swing.JLabel();
-        orden4 = new javax.swing.JLabel();
         TBespera = new javax.swing.JLabel();
         Basurero = new javax.swing.JButton();
         TBPuntaje = new javax.swing.JLabel();
@@ -232,8 +260,10 @@ public class cocinaTapia extends javax.swing.JFrame {
         setResizable(false);
 
         Fondo.setBackground(new java.awt.Color(255, 255, 255));
+        Fondo.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         Cinta.setBackground(new java.awt.Color(204, 204, 204));
+        Cinta.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Carne.png"))); // NOI18N
         jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -327,9 +357,6 @@ public class cocinaTapia extends javax.swing.JFrame {
         TOrden1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         TOrden1.setText("jLabel3");
 
-        orden4.setFont(new java.awt.Font("Alienware Heavy", 0, 24)); // NOI18N
-        orden4.setText("Espera:");
-
         TBespera.setText("lista");
 
         Basurero.setText("Basurero");
@@ -404,10 +431,7 @@ public class cocinaTapia extends javax.swing.JFrame {
                                     .addComponent(TOrden3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
                                     .addComponent(TBingredientes3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGap(4, 4, 4))
-                            .addComponent(TBespera, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FondoLayout.createSequentialGroup()
-                                .addComponent(orden4)
-                                .addGap(72, 72, 72))))
+                            .addComponent(TBespera, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, FondoLayout.createSequentialGroup()
                         .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FondoLayout.createSequentialGroup()
@@ -420,13 +444,11 @@ public class cocinaTapia extends javax.swing.JFrame {
                                     .addComponent(TBingredientes1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(FondoLayout.createSequentialGroup()
-                                .addComponent(LOrden2)
-                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(LOrden2)
                             .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(TBingredientes2, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
                                 .addComponent(TOrden2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addGap(9, 9, 9)
+                        .addGap(6, 6, Short.MAX_VALUE)
                         .addComponent(LOrden3)))
                 .addGap(25, 25, 25))
         );
@@ -434,22 +456,19 @@ public class cocinaTapia extends javax.swing.JFrame {
             FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FondoLayout.createSequentialGroup()
                 .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(FondoLayout.createSequentialGroup()
-                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(FondoLayout.createSequentialGroup()
                         .addContainerGap(14, Short.MAX_VALUE)
                         .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(puntos, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(TBPuntaje)
-                            .addComponent(orden4))
+                            .addComponent(TBPuntaje))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(tiempo, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(TBTiempo))
-                            .addComponent(TBespera, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                            .addComponent(TBespera, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(FondoLayout.createSequentialGroup()
                         .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -606,7 +625,6 @@ public class cocinaTapia extends javax.swing.JFrame {
     private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel logo;
-    private javax.swing.JLabel orden4;
     private javax.swing.JLabel puntos;
     private javax.swing.JLabel tiempo;
     // End of variables declaration//GEN-END:variables
