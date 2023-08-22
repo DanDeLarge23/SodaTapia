@@ -1,4 +1,4 @@
-
+import javax.swing.JOptionPane;
 /**
  *
  * @author Paula
@@ -66,7 +66,8 @@ public class Orden {
                 return;
             }
         }
-        System.out.println("Ingrediente " + nombreIngrediente + " no encontrado en la orden.");  
+        JOptionPane.showMessageDialog(null, "Ingrediente " 
+                + nombreIngrediente + " no encontrado en la orden.");  
     }
 
     @Override

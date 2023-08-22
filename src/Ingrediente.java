@@ -8,11 +8,6 @@ import java.util.Random;
  */
 public class Ingrediente {
     private String nombre;
-
-    @Override
-    public String toString() {
-        return nombre;
-    }
     private String imagen;
 
     public Ingrediente() {
@@ -22,22 +17,22 @@ public class Ingrediente {
         imagen = opciones[indiceAleatorio];
         nombre = imagen.replace(".png", "");
     }
-    
+
     public Ingrediente(String tipo) {
         String[] opciones = {"lechuga.png", "pan.png", "queso.png", "carne.png"};
-        if (tipo.equals("lechuga")){
+        if (tipo.equals("lechuga")) {
             imagen = opciones[0];
             nombre = imagen.replace(".png", "");
-        } else if (tipo.equals("pan")){
+        } else if (tipo.equals("pan")) {
             imagen = opciones[1];
             nombre = imagen.replace(".png", "");
-        } else if (tipo.equals("queso")){
+        } else if (tipo.equals("queso")) {
             imagen = opciones[2];
             nombre = imagen.replace(".png", "");
-        } else if (tipo.equals("carne")){
+        } else if (tipo.equals("carne")) {
             imagen = opciones[3];
             nombre = imagen.replace(".png", "");
-        } 
+        }
     }
 
     public String getImagen() {
@@ -56,4 +51,8 @@ public class Ingrediente {
         this.nombre = nombre;
     }
 
+    @Override
+    public String toString() {
+        return nombre;
+    }
 }

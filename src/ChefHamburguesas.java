@@ -1,11 +1,13 @@
 
 import java.util.Random;
 import javax.swing.Timer;
+
 /**
  *
  * @author Paula
  */
 public class ChefHamburguesas {
+
     private Orden[] ordenesPendientes;
     private Ingrediente[] cintaTransportadora;
     private Timer temporizadorOrdenes;
@@ -42,18 +44,21 @@ public class ChefHamburguesas {
     public void setTiempoRestante(int tiempoRestante) {
         this.tiempoRestante = tiempoRestante;
     }
-    
-    public ChefHamburguesas(Orden[] ordenesPendientes, Ingrediente[] cintaTransportadora, Timer temporizadorOrdenes, int tiempoRestante) {
+
+    public ChefHamburguesas(Orden[] ordenesPendientes,
+            Ingrediente[] cintaTransportadora, Timer temporizadorOrdenes,
+            int tiempoRestante) {
         this.ordenesPendientes = ordenesPendientes;
         this.cintaTransportadora = cintaTransportadora;
         this.temporizadorOrdenes = temporizadorOrdenes;
         this.tiempoRestante = tiempoRestante;
     }
 
-
     public ChefHamburguesas() {
         ordenesPendientes = new Orden[5];
-        cintaTransportadora = new Ingrediente[]{ new Ingrediente("Pan"), new Ingrediente("Carne"), new Ingrediente("Lechuga"), new Ingrediente("Tomate") };
+        cintaTransportadora = new Ingrediente[]{new Ingrediente("Pan"),
+            new Ingrediente("Carne"), new Ingrediente("Lechuga"),
+            new Ingrediente("Tomate")};
         tiempoRestante = 300; // 5 minutos en segundos
 
         // Temporizador para agregar nuevas órdenes cada 10 segundos
@@ -77,13 +82,15 @@ public class ChefHamburguesas {
         Ingrediente[] ingredientesAleatorios = new Ingrediente[3];
         Random random = new Random();
         for (int i = 0; i < ingredientesAleatorios.length; i++) {
-            ingredientesAleatorios[i] = cintaTransportadora[random.nextInt(cintaTransportadora.length)];
+            ingredientesAleatorios[i]
+                    = cintaTransportadora[random.nextInt(cintaTransportadora.length)];
         }
         return ingredientesAleatorios;
     }
 
     private String generarTipoHamburguesaAleatorio() {
-        String[] tiposHamburguesas = { "Hamburguesa con Queso", "Hamburguesa de Pollo", "Hamburguesa Vegetariana" };
+        String[] tiposHamburguesas = {"Hamburguesa con Queso",
+            "Hamburguesa de Pollo", "Hamburguesa Vegetariana"};
         Random random = new Random();
         return tiposHamburguesas[random.nextInt(tiposHamburguesas.length)];
     }
