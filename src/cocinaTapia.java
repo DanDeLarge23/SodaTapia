@@ -51,7 +51,7 @@ public class cocinaTapia extends javax.swing.JFrame {
     private void playMusic() {
     try {
         // Load the music file
-        File musicFile = new File("/Popurri.mp3");
+        File musicFile = new File(getClass().getResource("/Popurri.wav").getFile());
         AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(musicFile);
 
         // Create a Clip object to play the music
