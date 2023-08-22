@@ -66,18 +66,6 @@ public class ChefHamburguesas {
         temporizadorOrdenes.start();
     }
 
-    private void agregarNuevaOrden() {
-        for (int i = 0; i < ordenesPendientes.length; i++) {
-            if (ordenesPendientes[i] == null) {
-                Ingrediente[] ingredientes = generarIngredientesAleatorios();
-                String tipoHamburguesa = generarTipoHamburguesaAleatorio();
-                Orden orden = new Orden(tipoHamburguesa, ingredientes);
-                ordenesPendientes[i] = orden;
-                break;
-            }
-        }
-    }
-
     private Ingrediente[] generarIngredientesAleatorios() {
         Ingrediente[] ingredientesAleatorios = new Ingrediente[3];
         Random random = new Random();
@@ -89,9 +77,21 @@ public class ChefHamburguesas {
     }
 
     private String generarTipoHamburguesaAleatorio() {
-        String[] tiposHamburguesas = {"Hamburguesa con Queso",
-            "Hamburguesa de Pollo", "Hamburguesa Vegetariana"};
+        String[] tiposHamburguesas = {"Hamburguesa de carne",
+            "Hamburguesa con queso", "Hamburguesa clásica"};
         Random random = new Random();
         return tiposHamburguesas[random.nextInt(tiposHamburguesas.length)];
+    }
+
+    private void agregarNuevaOrden() {
+        for (int i = 0; i < ordenesPendientes.length; i++) {
+            if (ordenesPendientes[i] == null) {
+                Ingrediente[] ingredientes = generarIngredientesAleatorios();
+                String tipoHamburguesa = generarTipoHamburguesaAleatorio();
+                Orden orden = new Orden(tipoHamburguesa, ingredientes);
+                ordenesPendientes[i] = orden;
+                break;
+            }
+        }
     }
 }

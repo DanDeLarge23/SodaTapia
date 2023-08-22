@@ -26,7 +26,7 @@ public class cocinaTapia extends javax.swing.JFrame {
     private static Orden ordenActual3 = null;
     private int puntaje = 0;
     private static int tiempoOrden = 10;
-    private static int minutos = 5;
+    private static int minutos = 2;
     private static int segundos = 0;
 
     /**
@@ -89,6 +89,12 @@ public class cocinaTapia extends javax.swing.JFrame {
                 actualizarInfo();
                 this.TBPuntaje.setText(Integer.toString(puntaje));
                 recibirOrden();
+
+                // Verificar si se debe reorganizar las órdenes y agregar una nueva
+                if (ordenSeleccion == 1 && ordenActual1 == null) {
+                    reorganizarOrdenes();
+                    agregarNuevaOrden();
+                }
             }
 
             banda.eliminar(ingredienteSeleccion - 1);
@@ -99,6 +105,34 @@ public class cocinaTapia extends javax.swing.JFrame {
             ingredienteSeleccion = 0;
         }
         actualizarInfo();
+    }
+
+    private void reorganizarOrdenes() {
+        if (ordenActual2 != null) {
+            ordenActual1 = ordenActual2;
+            ordenActual2 = ordenActual3;
+        } else if (ordenActual3 != null) {
+            ordenActual1 = ordenActual3;
+        }
+
+        ordenActual3 = null;
+        TOrden1.setText(ordenActual1 != null ? ordenActual1.getNombre() : "completa");
+        TOrden2.setText(ordenActual2 != null ? ordenActual2.getNombre() : "completa");
+        TOrden3.setText("completa");
+        TBingredientes1.setText(ordenActual1 != null ? ordenActual1.getIngredientes().listarNombres() : "");
+        TBingredientes2.setText(ordenActual2 != null ? ordenActual2.getIngredientes().listarNombres() : "");
+        TBingredientes3.setText("");
+        actualizarInfo();
+    }
+
+    private void agregarNuevaOrden() {
+        if (ordenes.tamano() > 0) {
+            ordenActual3 = ordenes.obtener(0);
+            ordenes.eliminar(0);
+            TOrden3.setText(ordenActual3.getNombre());
+            TBingredientes3.setText(ordenActual3.getIngredientes().listarNombres());
+            recibirOrden();
+        }
     }
 
     public void actualizarInfo() {
@@ -167,7 +201,7 @@ public class cocinaTapia extends javax.swing.JFrame {
                     TBTiempo.setText("Tiempo expirado");
                     this.setVisible(false);
                     JOptionPane.showMessageDialog(null,
-                            "Game Over... \n El puntaje es: " + puntaje, 
+                            "Game Over... \n El puntaje es: " + puntaje,
                             "Puntaje", JOptionPane.INFORMATION_MESSAGE);
                     this.dispose();
                     System.exit(0);
