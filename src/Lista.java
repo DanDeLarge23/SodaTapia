@@ -3,6 +3,7 @@
  * @author Paula
  */
 public class Lista<T> {
+
     private Nodo<T> cabeza;
     private Nodo<T> ultimo;
 
@@ -28,30 +29,28 @@ public class Lista<T> {
         if (cabeza == null || indice < 0) {
             return null;
         }
-        
+
         Nodo<T> actual = cabeza;
         for (int i = 0; i < indice; i++) {
             actual = actual.siguiente;
             if (actual == cabeza) {
-                return null; 
+                return null;
             }
         }
-        
+
         return actual.dato;
     }
 
-    
-    
     public int tamano() {
-        Nodo actual = cabeza;
         int contador = 0;
+        Nodo actual = cabeza;
         while (actual != null) {
             contador++;
             actual = actual.siguiente;
         }
         return contador;
     }
-    
+
     public void eliminar(int indice) {
         if (indice < 0) {
             System.out.println("Índice inválido");
@@ -83,19 +82,18 @@ public class Lista<T> {
             System.out.println("Índice fuera del rango");
         }
     }
-    
+
     public String listarNombres() {
-    Nodo<T> actual = cabeza;
-    int contador = 1;
-    String res = "";
-    while (actual != null) {
-        res = res +contador + ". " + actual.dato.toString() + "\n";
-        actual = actual.siguiente;
-        contador++;
+        StringBuilder res = new StringBuilder();
+        Nodo<T> actual = cabeza;
+        int contador = 1;
+        while (actual != null) {
+            res.append(contador).append(". ").append(actual.dato.toString()).append("\n");
+            actual = actual.siguiente;
+            contador++;
+        }
+        return res.toString();
     }
-    return res;
-}
-    
 
     @Override
     public String toString() {

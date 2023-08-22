@@ -7,11 +7,31 @@ import javax.swing.Timer;
  * @author Paula
  */
 public class ChefHamburguesas {
-
     private Orden[] ordenesPendientes;
     private Ingrediente[] cintaTransportadora;
     private Timer temporizadorOrdenes;
     private int tiempoRestante;
+
+    public ChefHamburguesas() {
+        ordenesPendientes = new Orden[5];
+        cintaTransportadora = new Ingrediente[]{new Ingrediente("Pan"),
+            new Ingrediente("Carne"), new Ingrediente("Lechuga"),
+            new Ingrediente("Tomate")};
+        tiempoRestante = 300; // 5 minutos en segundos
+
+        // Temporizador para agregar nuevas órdenes cada 10 segundos
+        temporizadorOrdenes = new Timer(10000, (e) -> agregarNuevaOrden());
+        temporizadorOrdenes.start();
+    }
+
+    public ChefHamburguesas(Orden[] ordenesPendientes,
+            Ingrediente[] cintaTransportadora, Timer temporizadorOrdenes,
+            int tiempoRestante) {
+        this.ordenesPendientes = ordenesPendientes;
+        this.cintaTransportadora = cintaTransportadora;
+        this.temporizadorOrdenes = temporizadorOrdenes;
+        this.tiempoRestante = tiempoRestante;
+    }
 
     public Orden[] getOrdenesPendientes() {
         return ordenesPendientes;
@@ -43,27 +63,6 @@ public class ChefHamburguesas {
 
     public void setTiempoRestante(int tiempoRestante) {
         this.tiempoRestante = tiempoRestante;
-    }
-
-    public ChefHamburguesas(Orden[] ordenesPendientes,
-            Ingrediente[] cintaTransportadora, Timer temporizadorOrdenes,
-            int tiempoRestante) {
-        this.ordenesPendientes = ordenesPendientes;
-        this.cintaTransportadora = cintaTransportadora;
-        this.temporizadorOrdenes = temporizadorOrdenes;
-        this.tiempoRestante = tiempoRestante;
-    }
-
-    public ChefHamburguesas() {
-        ordenesPendientes = new Orden[5];
-        cintaTransportadora = new Ingrediente[]{new Ingrediente("Pan"),
-            new Ingrediente("Carne"), new Ingrediente("Lechuga"),
-            new Ingrediente("Tomate")};
-        tiempoRestante = 300; // 5 minutos en segundos
-
-        // Temporizador para agregar nuevas órdenes cada 10 segundos
-        temporizadorOrdenes = new Timer(1000, (e) -> agregarNuevaOrden());
-        temporizadorOrdenes.start();
     }
 
     private Ingrediente[] generarIngredientesAleatorios() {

@@ -7,30 +7,40 @@ import java.util.Random;
  * @author Paula
  */
 public class Ingrediente {
+
     private String nombre;
     private String imagen;
 
     public Ingrediente() {
-        String[] opciones = {"lechuga.png", "pan.png", "queso.png", "carne.png"};
-        Random random = new Random();
-        int indiceAleatorio = random.nextInt(opciones.length);
-        imagen = opciones[indiceAleatorio];
-        nombre = imagen.replace(".png", "");
+        inicializarIngredienteAleatorio();
     }
 
     public Ingrediente(String tipo) {
+        inicializarIngrediente(tipo);
+    }
+
+    private void inicializarIngredienteAleatorio() {
         String[] opciones = {"lechuga.png", "pan.png", "queso.png", "carne.png"};
+        Random random = new Random();
+        int indiceAleatorio = random.nextInt(opciones.length);
+        inicializarIngrediente(opciones[indiceAleatorio].replace(".png", ""));
+    }
+
+    private void inicializarIngrediente(String tipo) {
+        String[] opciones = {"lechuga.png", "pan.png", "queso.png", "carne.png"};
+        int indiceOpcion = -1;
         if (tipo.equals("lechuga")) {
-            imagen = opciones[0];
-            nombre = imagen.replace(".png", "");
+            indiceOpcion = 0;
         } else if (tipo.equals("pan")) {
-            imagen = opciones[1];
-            nombre = imagen.replace(".png", "");
+            indiceOpcion = 1;
         } else if (tipo.equals("queso")) {
-            imagen = opciones[2];
-            nombre = imagen.replace(".png", "");
+            indiceOpcion = 2;
         } else if (tipo.equals("carne")) {
-            imagen = opciones[3];
+            indiceOpcion = 3;
+        }
+
+        if (indiceOpcion != -1) {
+            imagen = opciones[indiceOpcion];
             nombre = imagen.replace(".png", "");
         }
     }
