@@ -53,7 +53,7 @@ public class Lista<T> {
 
     public void eliminar(int indice) {
         if (indice < 0) {
-            System.out.println("Índice inválido");
+            System.out.println("Ingrediente inválido");
             return;
         }
 
@@ -79,7 +79,7 @@ public class Lista<T> {
         if (actual != null) {
             anterior.siguiente = actual.siguiente;
         } else {
-            System.out.println("Índice fuera del rango");
+            System.out.println("Ingrediente fuera del rango");
         }
     }
 

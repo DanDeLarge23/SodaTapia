@@ -9,8 +9,37 @@ public class Orden {
     private Lista<Ingrediente> ingredientes = new Lista<Ingrediente>();
     private int puntos;
 
-    Orden(String tipoHamburguesa, Ingrediente[] ingredientes) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+    public Orden(String tipoHamburguesa) {
+        this.nombre = tipoHamburguesa;
+        if (tipoHamburguesa.equals("HCarne")) {
+            this.ingredientes.insertar(new Ingrediente("pan"));
+            this.ingredientes.insertar(new Ingrediente("carne"));
+            this.puntos = 5;
+        } else if (tipoHamburguesa.equals("HQueso")) {
+            this.ingredientes.insertar(new Ingrediente("pan"));
+            this.ingredientes.insertar(new Ingrediente("carne"));
+            this.ingredientes.insertar(new Ingrediente("queso"));
+
+            this.puntos = 10;
+        } else if (tipoHamburguesa.equals("HClasica")) {
+            this.ingredientes.insertar(new Ingrediente("pan"));
+            this.ingredientes.insertar(new Ingrediente("carne"));
+            this.ingredientes.insertar(new Ingrediente("queso"));
+            this.ingredientes.insertar(new Ingrediente("lechuga"));
+            this.puntos = 15;
+        }
+    }
+
+    public void EliminarIngrediente(String nombreIngrediente) {
+        for (int i = 0; i < this.ingredientes.tamano(); i++) {
+            if (this.ingredientes.obtener(i).getNombre().equals(nombreIngrediente)) {
+                this.ingredientes.eliminar(i);
+                System.out.println("Ingrediente " + nombreIngrediente + " eliminado.");
+                return;
+            }
+        }
+        JOptionPane.showMessageDialog(null, "Ingrediente "
+                + nombreIngrediente + " no encontrado en la orden.");
     }
 
     public int getPuntos() {
@@ -37,44 +66,6 @@ public class Orden {
         this.ingredientes = ingredientes;
     }
 
-    public Orden(String tipoHamburguesa) {
-        this.nombre = tipoHamburguesa;
-        if (tipoHamburguesa.equals("HCarne")) {
-            this.ingredientes.insertar(new Ingrediente("pan"));
-            this.ingredientes.insertar(new Ingrediente("carne"));
-            this.puntos = 5;
-        } else if (tipoHamburguesa.equals("HQueso")) {
-            this.ingredientes.insertar(new Ingrediente("pan"));
-            this.ingredientes.insertar(new Ingrediente("carne"));
-            this.ingredientes.insertar(new Ingrediente("queso"));
-            
-            this.puntos = 10;
-        } else if (tipoHamburguesa.equals("HClasica")) {
-            this.ingredientes.insertar(new Ingrediente("pan"));
-            this.ingredientes.insertar(new Ingrediente("carne"));
-            this.ingredientes.insertar(new Ingrediente("queso"));
-            this.ingredientes.insertar(new Ingrediente("lechuga"));
-            this.puntos = 15;
-        }
-    }
-        
-    public void EliminarIngrediente (String nombreIngrediente) {
-        for(int i=0; i<this.ingredientes.tamano();i++){
-            if (this.ingredientes.obtener(i).getNombre().equals(nombreIngrediente)){
-                this.ingredientes.eliminar(i);
-                System.out.println("Ingrediente " + nombreIngrediente + " eliminado.");
-                return;
-            }
-        }
-        JOptionPane.showMessageDialog(null, "Ingrediente " 
-                + nombreIngrediente + " no encontrado en la orden.");  
-    }
-
-    @Override
-    public String toString() {
-        return nombre;
-    }
-
     public String getTipoHamburguesa() {
         return nombre;
     }
@@ -83,4 +74,12 @@ public class Orden {
         this.nombre = tipoHamburguesa;
     }
 
+    Orden(String tipoHamburguesa, Ingrediente[] ingredientes) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String toString() {
+        return nombre;
+    }
 }

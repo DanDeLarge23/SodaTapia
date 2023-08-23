@@ -17,10 +17,10 @@ public class ChefHamburguesas {
         cintaTransportadora = new Ingrediente[]{new Ingrediente("Pan"),
             new Ingrediente("Carne"), new Ingrediente("Lechuga"),
             new Ingrediente("Tomate")};
-        tiempoRestante = 300; // 5 minutos en segundos
+        tiempoRestante = 120; // 2 minutos en segundos
 
-        // Temporizador para agregar nuevas órdenes cada 10 segundos
-        temporizadorOrdenes = new Timer(10000, (e) -> agregarNuevaOrden());
+        // Temporizador para agregar nuevas órdenes cada 5 segundos
+        temporizadorOrdenes = new Timer(5000, (e) -> agregarNuevaOrden());
         temporizadorOrdenes.start();
     }
 
